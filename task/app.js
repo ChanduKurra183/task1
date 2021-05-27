@@ -1,0 +1,33 @@
+var express = require('express');
+var mongoose = require('mongoose');
+var path = require('path');
+var cookieParser = require('cookie-parser');
+var logger = require('morgan');
+
+var indexRouter = require('./routes/index');
+var usersRouter = require('./routes/users');
+var productRouter = require('./routes/product');
+
+var app = express();
+
+const url = 'mongodb://localhost:27017/Productdb'
+mongoose.connect(url, {useNewUrlParser:true})
+const connec = mongoose.connection
+
+
+
+connec.on('open', () =>{
+    console.log('Connected to db...')
+})
+
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+app.use('/product',productRouter);
+
+module.exports = app;
